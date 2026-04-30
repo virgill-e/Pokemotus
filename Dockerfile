@@ -40,7 +40,7 @@ RUN npm install --omit=dev
 # Environment variables
 ENV NODE_ENV=production
 ENV HOST=0.0.0.0
-ENV PORT=3000
+ENV PORT=3222
 
 # Expose the app port
 EXPOSE 3222
