@@ -1,5 +1,5 @@
 <template>
-  <div class="h-screen bg-[#c00000] font-['Press_Start_2P'] selection:bg-black/20 overflow-hidden relative flex flex-col">
+  <div class="h-screen bg-[#c00000] font-['Press_Start_2P'] selection:bg-black/20 overflow-hidden relative flex flex-col touch-manipulation">
     <!-- Loading State -->
     <div v-if="loading" class="absolute inset-0 z-50 bg-[#c00000] flex flex-col items-center justify-center gap-6">
       <div class="w-16 h-16 rounded-full border-4 border-white border-t-transparent animate-spin"></div>
@@ -125,7 +125,7 @@
             <div v-for="(row, rowIndex) in keyboardRows" :key="rowIndex" class="flex justify-center gap-0.5 sm:gap-1 w-full">
               <button v-for="key in row" :key="key" 
                       @click="handleInput(key)"
-                      class="h-10 sm:h-12 flex items-center justify-center rounded border-b-2 sm:border-b-4 text-[8px] sm:text-[10px] transition-all transform duration-75 active:translate-y-1 active:border-b-0 flex-1 min-w-0"
+                      class="h-10 sm:h-12 flex items-center justify-center rounded border-b-2 sm:border-b-4 text-[8px] sm:text-[10px] transition-all transform duration-75 active:translate-y-1 active:border-b-0 flex-1 min-w-0 touch-manipulation"
                       :class="[
                         key.length > 1 ? 'flex-[1.5] text-[7px]' : '',
                         getKeyColorClass(key),
@@ -146,6 +146,14 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useGame } from '~/composables/useGame'
+
+// Prevent zoom on mobile and set theme color
+useHead({
+  viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no',
+  meta: [
+    { name: 'theme-color', content: '#c00000' }
+  ]
+})
 
 const { 
   pokemon, guesses, currentGuess, maxAttempts, 
