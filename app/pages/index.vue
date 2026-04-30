@@ -140,20 +140,68 @@
 
       <div class="w-16 h-1 bg-black/20 rounded-full mx-auto mb-2 sm:mb-4"></div>
     </div>
+
+    <!-- SEO Content (Hidden from visual users but accessible to bots) -->
+    <section class="sr-only">
+      <h2>À propos de Pokemotus</h2>
+      <p>Pokemotus est un jeu de réflexion quotidien pour les fans de Pokémon. Chaque jour, un nouveau Pokémon est choisi au hasard, et vous avez six essais pour deviner son nom. C'est une variante du célèbre jeu Motus (ou Wordle) appliquée à l'univers Pokémon.</p>
+      <h3>Comment jouer au jeu Pokémon Nom ?</h3>
+      <p>Entrez un nom de Pokémon. Si une lettre est sur fond sombre, elle est à la bonne place. Si elle est sur fond blanc, elle est présente dans le nom mais à la mauvaise place. Si elle est grisée, elle n'est pas dans le nom du Pokémon du jour.</p>
+      <ul>
+        <li>Devinez le Pokémon du jour</li>
+        <li>Challenge quotidien gratuit</li>
+        <li>Partagez votre score avec vos amis</li>
+      </ul>
+    </section>
+
+    <footer class="bg-[#a00000] py-4 px-4 text-center text-white/40 text-[6px] font-sans">
+      <p>&copy; 2026 Pokemotus - Fan game Pokémon inspiré par Motus & Wordle</p>
+      <p>Les noms et images de Pokémon sont la propriété de Nintendo, Creatures Inc. et GAME FREAK.</p>
+    </footer>
   </div>
 </template>
+
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useGame } from '~/composables/useGame'
 
-// Prevent zoom on mobile and set theme color
+// SEO and Metadata
 useHead({
-  viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no',
+  title: 'Pokemotus - Le Motus des Pokémon',
   meta: [
+    { name: 'description', content: 'Le jeu quotidien pour les fans de Pokémon. Devinez le Pokémon du jour en 6 tentatives. Inspiré par Motus et Wordle.' },
+    { name: 'keywords', content: 'pokemotus, pokemon nom jeu, pokemon motus, pokemon wordle, pokemon game, jeu pokemon, pokemon du jour, deviner pokemon, jeu de pokémon' },
     { name: 'theme-color', content: '#c00000' }
+  ],
+  link: [
+    { rel: 'canonical', href: 'https://pokemotus.virgill-e.com' }
+  ],
+  script: [
+    {
+      type: 'application/ld+json',
+      children: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'SoftwareApplication',
+        'name': 'Pokemotus',
+        'operatingSystem': 'Web',
+        'applicationCategory': 'GameApplication',
+        'genre': 'Puzzle',
+        'description': 'Un jeu quotidien où vous devez deviner un nom de Pokémon en 6 essais.',
+        'offers': {
+          '@type': 'Offer',
+          'price': '0',
+          'priceCurrency': 'EUR'
+        },
+        'author': {
+          '@type': 'Organization',
+          'name': 'Pokemotus'
+        }
+      })
+    }
   ]
 })
+
 
 const { 
   pokemon, guesses, currentGuess, maxAttempts, 

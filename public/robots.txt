@@ -1,2 +1,4 @@
 User-Agent: *
 Disallow:
+
+Sitemap: https://pokemotus.virgill-e.com/sitemap.xml

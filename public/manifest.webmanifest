@@ -1,0 +1,21 @@
+{
+  "name": "Pokemotus",
+  "short_name": "Pokemotus",
+  "description": "Le jeu quotidien pour deviner le Pokémon du jour.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#c00000",
+  "theme_color": "#c00000",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
