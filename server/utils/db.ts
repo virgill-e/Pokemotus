@@ -5,9 +5,9 @@ let db: any = null;
 
 export const useDb = () => {
   if (!db) {
-    // In production, you might want to use a persistent path
-    // For local dev, it creates 'records.db' in the root
-    db = new Database('records.db');
+    // Allow overriding the DB path via env var (pro for Docker/Dokploy)
+    const dbPath = process.env.DB_PATH || 'records.db';
+    db = new Database(dbPath);
     
     // Create table if it doesn't exist
     db.exec(`
