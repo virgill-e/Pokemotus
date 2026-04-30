@@ -13,7 +13,9 @@
     </div>
 
     <!-- Win/Leaderboard Overlay -->
-    <div v-if="isGameOver || showLeaderboard" class="absolute inset-0 z-40 bg-black/80 flex items-center justify-center p-4">
+    <div v-if="isGameOver || showLeaderboard" 
+         @click.self="isGameOver = false; showLeaderboard = false"
+         class="absolute inset-0 z-40 bg-black/80 flex items-center justify-center p-4">
       <div class="w-full max-w-sm bg-[#9ca3af] border-8 border-[#303030] p-4 rounded-xl flex flex-col gap-4 text-[#1a1a1a] shadow-2xl relative">
         <div class="absolute inset-0 opacity-5 pointer-events-none" style="background-image: linear-gradient(#000 1px, transparent 1px); background-size: 100% 4px;"></div>
         
@@ -26,7 +28,7 @@
         </div>
 
         <!-- Registration form if won -->
-        <div v-if="isWon && !recordSaved" class="bg-black/5 p-3 border-2 border-[#1a1a1a] rounded flex flex-col gap-3">
+        <div v-if="isWon && !isRecordSaved" class="bg-black/5 p-3 border-2 border-[#1a1a1a] rounded flex flex-col gap-3">
           <p class="text-[6px] text-center">ENREGISTRE TON SCORE</p>
           <input v-model="username" 
                  placeholder="PSEUDO" 
@@ -85,7 +87,7 @@
             <button @click="showLeaderboard = true" class="w-5 h-5 rounded-full bg-white/20 text-white text-[8px] flex items-center justify-center hover:bg-white/40 transition-colors border border-white/10 active:scale-95">🏆</button>
             
             <!-- Help Button -->
-            <div class="relative group">
+            <div ref="helpContainer" class="relative group">
               <button @click="showHelp = !showHelp" class="w-5 h-5 rounded-full bg-white/20 text-white text-[8px] flex items-center justify-center hover:bg-white/40 transition-colors border border-white/10 active:scale-95">?</button>
               <div class="absolute right-0 top-6 w-44 bg-[#303030] border-2 border-white/20 p-2 rounded shadow-2xl transition-all z-50 pointer-events-none"
                    :class="[showHelp ? 'opacity-100 scale-100' : 'opacity-0 scale-95']">
@@ -149,10 +151,9 @@ const {
   pokemon, guesses, currentGuess, maxAttempts, 
   loading, error, wordLength, fetchDailyPokemon,
   addLetter, removeLetter, submitGuess,
-  isWon, isGameOver, leaderboard, username, saveRecord
+  isWon, isGameOver, isRecordSaved, leaderboard, username, saveRecord
 } = useGame()
 
-const recordSaved = ref(false)
 const showHelp = ref(false)
 const showLeaderboard = ref(false)
 const pressedKey = ref(null)
@@ -165,7 +166,6 @@ const keyboardRows = [
 
 const handleSave = async () => {
   await saveRecord()
-  recordSaved.value = true
 }
 
 const handleInput = (key) => {
@@ -185,15 +185,26 @@ const handleKeyDown = (e) => {
 
 const handleKeyUp = () => { pressedKey.value = null }
 
+// Click Outside Logic
+const helpContainer = ref(null)
+
+const handleClickOutside = (e) => {
+  if (helpContainer.value && !helpContainer.value.contains(e.target)) {
+    showHelp.value = false
+  }
+}
+
 onMounted(() => {
   fetchDailyPokemon()
   window.addEventListener('keydown', handleKeyDown)
   window.addEventListener('keyup', handleKeyUp)
+  window.addEventListener('mousedown', handleClickOutside)
 })
 
 onUnmounted(() => {
   window.removeEventListener('keydown', handleKeyDown)
   window.removeEventListener('keyup', handleKeyUp)
+  window.removeEventListener('mousedown', handleClickOutside)
 })
 
 const getCellChar = (rowIdx, colIdx) => {

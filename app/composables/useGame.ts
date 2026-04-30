@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 export const useGame = () => {
   const pokemon = ref(null)
@@ -10,17 +10,37 @@ export const useGame = () => {
 
   const isWon = ref(false)
   const isGameOver = ref(false)
+  const isRecordSaved = ref(false)
   const leaderboard = ref([])
   const username = ref('')
+
+  // Persistence Cookie
+  const gameCookie = useCookie('pokemotus_state', {
+    maxAge: 60 * 60 * 24 * 7, // 1 week
+    watch: true
+  })
 
   const fetchDailyPokemon = async () => {
     loading.value = true
     try {
       const data = await $fetch('/api/daily-pokemon')
       pokemon.value = data
-      if (pokemon.value?.name) {
+      
+      const today = data.date // This is the Brussels date from API
+      
+      // Restore from cookie if it's the same day
+      if (gameCookie.value && gameCookie.value.date === today) {
+        guesses.value = gameCookie.value.guesses || []
+        isWon.value = gameCookie.value.isWon || false
+        isGameOver.value = gameCookie.value.isGameOver || false
+        isRecordSaved.value = gameCookie.value.isRecordSaved || false
+        username.value = gameCookie.value.username || ''
+      }
+
+      if (!isGameOver.value && pokemon.value?.name) {
         currentGuess.value = pokemon.value.name[0]
       }
+      
       await fetchLeaderboard()
     } catch (err) {
       error.value = err
@@ -29,6 +49,20 @@ export const useGame = () => {
       loading.value = false
     }
   }
+
+  // Watch for state changes to update cookie
+  watch([guesses, isWon, isGameOver, isRecordSaved, username, pokemon], () => {
+    if (pokemon.value?.date) {
+      gameCookie.value = {
+        date: pokemon.value.date,
+        guesses: guesses.value,
+        isWon: isWon.value,
+        isGameOver: isGameOver.value,
+        isRecordSaved: isRecordSaved.value,
+        username: username.value
+      }
+    }
+  }, { deep: true })
 
   const fetchLeaderboard = async () => {
     try {
@@ -57,7 +91,7 @@ export const useGame = () => {
   }
 
   const saveRecord = async () => {
-    if (!username.value || !isWon.value) return
+    if (!username.value || !isWon.value || isRecordSaved.value) return
     try {
       await $fetch('/api/records', {
         method: 'POST',
@@ -68,6 +102,7 @@ export const useGame = () => {
           pokemonName: pokemon.value.name
         }
       })
+      isRecordSaved.value = true
       await fetchLeaderboard()
     } catch (err) {
       console.error('Failed to save record:', err)
@@ -75,7 +110,8 @@ export const useGame = () => {
   }
 
   const addLetter = (letter: string) => {
-    if (isGameOver.value || currentGuess.value.length < wordLength.value) {
+    if (isGameOver.value) return
+    if (currentGuess.value.length < wordLength.value) {
       currentGuess.value += letter
     }
   }
@@ -97,6 +133,7 @@ export const useGame = () => {
     wordLength,
     isWon,
     isGameOver,
+    isRecordSaved,
     leaderboard,
     username,
     fetchDailyPokemon,
