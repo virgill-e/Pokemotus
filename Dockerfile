@@ -43,7 +43,7 @@ ENV HOST=0.0.0.0
 ENV PORT=3000
 
 # Expose the app port
-EXPOSE 3000
+EXPOSE 3222
 
 # Start the server
 CMD ["node", ".output/server/index.mjs"]
