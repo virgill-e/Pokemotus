@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const date = new Date().toISOString().split('T')[0];
+  const date = getBrusselsDate();
   const db = useDb();
 
   const stmt = db.prepare(`

@@ -7,9 +7,8 @@ export default defineEventHandler(async (event) => {
   const MIN_ID = 1;
   const MAX_ID = 151;
 
-  // Use the current date (YYYY-MM-DD) as a seed
-  const date = new Date();
-  const dateString = date.toISOString().split('T')[0];
+  // Use Brussels time for date-based logic
+  const dateString = getBrusselsDate();
   
   const getSeedFromDate = (str: string) => {
     let hash = 0;

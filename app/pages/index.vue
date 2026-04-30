@@ -13,13 +13,16 @@
     </div>
 
     <!-- Win/Leaderboard Overlay -->
-    <div v-if="isGameOver" class="absolute inset-0 z-40 bg-black/80 flex items-center justify-center p-4">
+    <div v-if="isGameOver || showLeaderboard" class="absolute inset-0 z-40 bg-black/80 flex items-center justify-center p-4">
       <div class="w-full max-w-sm bg-[#9ca3af] border-8 border-[#303030] p-4 rounded-xl flex flex-col gap-4 text-[#1a1a1a] shadow-2xl relative">
         <div class="absolute inset-0 opacity-5 pointer-events-none" style="background-image: linear-gradient(#000 1px, transparent 1px); background-size: 100% 4px;"></div>
         
-        <div class="text-center">
+        <div v-if="isGameOver" class="text-center">
           <h2 class="text-xs mb-2">{{ isWon ? 'BRAVO !' : 'DOMMAGE...' }}</h2>
           <p class="text-[8px] mb-4">C'ÉTAIT {{ pokemon?.name }}</p>
+        </div>
+        <div v-else class="text-center">
+          <h2 class="text-xs mb-2">RECORDS</h2>
         </div>
 
         <!-- Registration form if won -->
@@ -47,7 +50,7 @@
           </div>
         </div>
 
-        <button @click="isGameOver = false" class="text-[6px] text-center mt-2 underline opacity-50 font-bold">FERMER</button>
+        <button @click="isGameOver = false; showLeaderboard = false" class="text-[6px] text-center mt-2 underline opacity-50 font-bold">FERMER</button>
       </div>
     </div>
 
@@ -72,18 +75,25 @@
           </div>
         </div>
         
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2">
           <h1 class="text-white text-[8px] sm:text-xs tracking-tighter drop-shadow-[1px_1px_0_rgba(0,0,0,0.5)]">
             POKÉMOTUS
           </h1>
-          <div class="relative group">
-            <button @click="showHelp = !showHelp" class="w-5 h-5 rounded-full bg-white/20 text-white text-[8px] flex items-center justify-center hover:bg-white/40 transition-colors border border-white/10 active:scale-95">?</button>
-            <div class="absolute right-0 top-6 w-44 bg-[#303030] border-2 border-white/20 p-2 rounded shadow-2xl transition-all z-50 pointer-events-none"
-                 :class="[showHelp ? 'opacity-100 scale-100' : 'opacity-0 scale-95']">
-              <div class="text-[6px] text-white space-y-2 leading-loose">
-                <div class="flex items-center gap-2"><div class="w-3 h-3 bg-[#1a1a1a] border border-white/20"></div><span>BONNE PLACE</span></div>
-                <div class="flex items-center gap-2"><div class="w-3 h-3 bg-white border border-black"></div><span>MAUVAISE PLACE</span></div>
-                <div class="flex items-center gap-2"><div class="w-3 h-3 border border-white/20 opacity-30"></div><span>INEXISTANT</span></div>
+          
+          <div class="flex items-center gap-1.5">
+            <!-- Leaderboard Button -->
+            <button @click="showLeaderboard = true" class="w-5 h-5 rounded-full bg-white/20 text-white text-[8px] flex items-center justify-center hover:bg-white/40 transition-colors border border-white/10 active:scale-95">🏆</button>
+            
+            <!-- Help Button -->
+            <div class="relative group">
+              <button @click="showHelp = !showHelp" class="w-5 h-5 rounded-full bg-white/20 text-white text-[8px] flex items-center justify-center hover:bg-white/40 transition-colors border border-white/10 active:scale-95">?</button>
+              <div class="absolute right-0 top-6 w-44 bg-[#303030] border-2 border-white/20 p-2 rounded shadow-2xl transition-all z-50 pointer-events-none"
+                   :class="[showHelp ? 'opacity-100 scale-100' : 'opacity-0 scale-95']">
+                <div class="text-[6px] text-white space-y-2 leading-loose">
+                  <div class="flex items-center gap-2"><div class="w-3 h-3 bg-[#1a1a1a] border border-white/20"></div><span>BONNE PLACE</span></div>
+                  <div class="flex items-center gap-2"><div class="w-3 h-3 bg-white border border-black"></div><span>MAUVAISE PLACE</span></div>
+                  <div class="flex items-center gap-2"><div class="w-3 h-3 border border-white/20 opacity-30"></div><span>INEXISTANT</span></div>
+                </div>
               </div>
             </div>
           </div>
@@ -144,6 +154,7 @@ const {
 
 const recordSaved = ref(false)
 const showHelp = ref(false)
+const showLeaderboard = ref(false)
 const pressedKey = ref(null)
 
 const keyboardRows = [
