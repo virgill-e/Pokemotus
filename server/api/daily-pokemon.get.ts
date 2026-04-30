@@ -5,11 +5,11 @@ export default defineEventHandler(async (event) => {
 
   // Configurable range: Gen 1 by default (1 to 151)
   const MIN_ID = 1;
-  const MAX_ID = 151;
+  const MAX_ID = 1025;
 
   // Use Brussels time for date-based logic
   const dateString = getBrusselsDate();
-  
+
   const getSeedFromDate = (str: string) => {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
@@ -25,11 +25,11 @@ export default defineEventHandler(async (event) => {
   try {
     const pokemon: any = await $fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`);
     const species: any = await $fetch(pokemon.species.url);
-    
+
     // Find localized name based on preferred language, fallback to English then to base name
-    const localizedName = species.names.find((n: any) => n.language.name === preferredLang)?.name 
-                       || species.names.find((n: any) => n.language.name === 'en')?.name
-                       || pokemon.name;
+    const localizedName = species.names.find((n: any) => n.language.name === preferredLang)?.name
+      || species.names.find((n: any) => n.language.name === 'en')?.name
+      || pokemon.name;
 
     return {
       id: pokemon.id,
